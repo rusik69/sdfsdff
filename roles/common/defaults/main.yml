@@ -1,0 +1,3 @@
+common_packages:
+  - python-setuptools
+  - python-pip

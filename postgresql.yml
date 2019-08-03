@@ -1,0 +1,6 @@
+---
+- hosts: postgresql
+  gather_facts: False
+  roles:
+    - common
+    - postgresql

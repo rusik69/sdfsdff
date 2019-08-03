@@ -1,0 +1,19 @@
+- name: run postgresql container
+  docker_container:
+    name: "{{ item.name }}"
+    image: "{{ item.image | default(postgresql_image) }}:{{ item.image_tag | default(postgresql_image_tag) }}"
+    env:
+      POSTGRES_DB: "{{ item.name }}"
+    volumes: "{{ item.volumes | default([]) }}"
+    published_ports: "{{ item.published_ports | default([]) }}"
+  loop:
+    "{{ postgresql_containers }}"
+
+- name: create postgresql users
+  postgresql_user:
+    db: "{{ item[0].name }}"
+    name: "{{ item[1].name }}"
+    password: "{{ item[1].password }}"
+    priv: "{{ item[1].priv }}"
+  loop:
+    "{{ postgresql_containers | zip(postgresql_users) | list }}"

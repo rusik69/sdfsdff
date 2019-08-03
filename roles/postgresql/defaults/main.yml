@@ -1,0 +1,14 @@
+postgresql_image: postgres
+postgresql_image_tag: 11.4
+
+postgresql_containers:
+  - name: postgresql
+    volumes:
+      - /var/lib/postgresql:/var/lib/postgresql
+    published_ports:
+      - "127.0.0.1:5432:5432"
+
+postgresql_users:
+  - name: reader
+    password: reader
+    priv: "USAGE/ALL:SELECT"
