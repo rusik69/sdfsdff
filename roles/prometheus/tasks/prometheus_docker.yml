@@ -1,0 +1,14 @@
+- name: copy prometheus.yml
+  template:
+    src: "{{ item.name }}.yml.j2"
+    dest: "/etc/{{ item.name }}.yml"
+  loop: "{{ prometheus_containers }}"
+
+- name: run prometheus containers
+  docker_container:
+    name: "{{ item.name }}"
+    image: "{{ item.image | default(prometheus_image) }}:{{ item.image_tag | default(prometheus_image_tag) }}"
+    volumes: "{{ item.volumes | default([]) }}"
+    published_ports: "{{ item.published_ports | default([]) }}"
+  loop:
+    "{{ prometheus_containers }}"
