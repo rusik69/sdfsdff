@@ -1,0 +1,11 @@
+- name: run prometheus exporter container
+  docker_container:
+    name: "{{ item[0].name }}"
+    image: "{{ item[0].image | default(postgresql_exporter_image) }}:{{ item[0].image_tag | default(postgresql_exporter_image_tag) }}"
+    env:
+      DATA_SOURCE_URI: "postgresql://{{ item[1].published_ports.split(':')[0] }}:{{ item[1].published_ports.split(':')[1] }}/postgres?sslmode=disable"
+      DATA_SOURCE_USER: "{{ postgresql_users[0].name }}"
+      DATA_SOURCE_PASS: "{{ postgresql_users[0].password }}"
+    published_ports: "{{ item[0].published_ports | default([]) }}"
+  loop:
+    "{{ postgresql_exporter_containers | zip(postgresql_containers) | list }}"

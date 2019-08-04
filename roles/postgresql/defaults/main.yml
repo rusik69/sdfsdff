@@ -1,5 +1,7 @@
 postgresql_image: postgres
 postgresql_image_tag: 11.4
+postgresql_exporter_image: wrouesnel/postgres_exporter
+postgresql_exporter_image_tag: v0.5.1
 
 postgresql_containers:
   - name: postgresql
@@ -11,4 +13,12 @@ postgresql_containers:
 postgresql_users:
   - name: reader
     password: reader
-    priv: "USAGE/ALL:SELECT"
+    priv: SELECT
+  - name: writer
+    password: writer
+    priv: ALL
+
+postgresql_exporter_containers:
+  - name: postgresql_exporter
+    published_ports:
+      - "127.0.0.1:9187:9187"

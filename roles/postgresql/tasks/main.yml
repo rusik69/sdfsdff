@@ -1,1 +1,2 @@
 - include: postgresql_docker.yml
+- include: prometheus_exporter.yml

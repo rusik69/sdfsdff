@@ -1,9 +1,11 @@
-- name: run postgresql container
+- name: run postgresql containers
   docker_container:
     name: "{{ item.name }}"
     image: "{{ item.image | default(postgresql_image) }}:{{ item.image_tag | default(postgresql_image_tag) }}"
     env:
       POSTGRES_DB: "{{ item.name }}"
+      POSTGRES_USER: "{{ item.default_user | default('postgres') }}"
+      POSTGRES_PASSWORD: "{{ item.default_password | default('postgres') }}"
     volumes: "{{ item.volumes | default([]) }}"
     published_ports: "{{ item.published_ports | default([]) }}"
   loop:
@@ -14,6 +16,23 @@
     db: "{{ item[0].name }}"
     name: "{{ item[1].name }}"
     password: "{{ item[1].password }}"
-    priv: "{{ item[1].priv }}"
-  loop:
-    "{{ postgresql_containers | zip(postgresql_users) | list }}"
+    login_host: "{{ item[0].published_ports[0].split(':')[0] }}"
+    port: "{{ item[0].published_ports[0].split(':')[1] }}"
+    login_user: "{{ item[0].default_user | default('postgres') }}"
+    login_password: "{{ item[0].default_password | default('postgres') }}"
+  with_nested:
+    - "{{ postgresql_containers }}"
+    - "{{ postgresql_users }}"
+
+- name: set postgresql users privs
+  postgresql_privs:
+    db: "{{ item[0].name }}"
+    role: "{{ item[1].name }}"
+    objs: ALL_IN_SCHEMA
+    privs: "{{ item[1].priv }}"
+    login_host: "{{ item[0].published_ports[0].split(':')[0] }}"
+    login_user: "{{ item[0].default_user | default('postgres') }}"
+    login_password: "{{ item[0].default_password | default('postgres') }}"
+  with_nested:
+    - "{{ postgresql_containers }}"
+    - "{{ postgresql_users }}"
