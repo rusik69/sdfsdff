@@ -7,4 +7,6 @@
       DATA_SOURCE_USER: "{{ postgresql_users[0].name }}"
       DATA_SOURCE_PASS: "{{ postgresql_users[0].password }}"
     published_ports: "{{ item[0].published_ports | default([]) }}"
+    networks:
+      - "{{ docker_network }}"
   loop: "{{ postgresql_exporter_containers | zip(postgresql_containers) | list }}"

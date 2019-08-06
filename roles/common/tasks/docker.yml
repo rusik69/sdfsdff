@@ -12,3 +12,7 @@
   loop:
     - docker
     - psycopg2-binary
+
+- name: Create docker network
+  docker_network:
+    name: "{{ docker_network }}"
