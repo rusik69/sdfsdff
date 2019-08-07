@@ -1,0 +1,33 @@
+- name: copy prometheus.yml template
+  template:
+    src: prometheus.yml.j2
+    dest: /etc/prometheus.yml
+
+- name: run docker containers
+  docker_compose:
+    project_name: postgresql
+    definition:
+      version: '2'
+      services:
+        postgresql:
+          image: "{{ postgresql_image }}:{{ postgresql_image_tag }}"
+          environment:
+            POSTGRES_DB: "{{ postgresql_db_name }}"
+            POSTGRES_USER: "{{ postgresql_user_name }}"
+            POSTGRES_PASSWORD: "{{ postgresql_user_password }}"
+          volumes: "{{ postgresql_volumes }}"
+          ports: "{{ postgresql_published_ports }}"
+        prometheus_exporter:
+          image: "{{ postgresql_exporter_image }}:{{ postgresql_exporter_image_tag }}"
+          environment:
+            DATA_SOURCE_URI: "postgresql://postgresql:5432/postgres?sslmode=disable"
+            DATA_SOURCE_USER: "{{ postgresql_user_name }}"
+            DATA_SOURCE_PASS: "{{ postgresql_user_password }}"
+          ports: "{{ postgresql_exporter_published_ports }}"
+        prometheus:
+          image: "{{ prometheus_image }}:{{ prometheus_image_tag }}"
+          volumes: "{{ prometheus_volumes }}"
+          ports: "{{ prometheus_published_ports }}"
+        grafana:
+          image: "{{ grafana_image }}:{{ grafana_image_tag }}"
+          ports: "{{ grafana_published_ports }}"

@@ -1,9 +1,0 @@
-prometheus_image: prom/prometheus
-prometheus_image_tag: v2.11.1
-
-prometheus_containers:
-  - name: prometheus
-    published_ports:
-      - "127.0.0.1:9090:9090"
-    volumes:
-      - "/etc/prometheus.yml:/etc/prometheus/prometheus.yml"

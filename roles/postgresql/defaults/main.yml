@@ -1,15 +1,17 @@
 postgresql_image: postgres
 postgresql_image_tag: 11.4
+postgresql_db_name: postgresql
+postgresql_user_name: postgresql
+postgresql_user_password: postgresql
+postgresql_volumes:
+  - "/var/lib/postgresql:/var/lib/postgresql"
+postgresql_published_ports:
+  - "127.0.0.1:5432:5432"
+
 postgresql_exporter_image: wrouesnel/postgres_exporter
 postgresql_exporter_image_tag: v0.5.1
-
-postgresql_containers:
-  - name: postgresql
-    volumes:
-      - /var/lib/postgresql:/var/lib/postgresql
-    published_ports:
-      - "127.0.0.1:5432:5432"
-
+postgresql_exporter_published_ports:
+  - "127.0.0.1:9187:9187"
 postgresql_users:
   - name: reader
     password: reader
@@ -18,7 +20,14 @@ postgresql_users:
     password: writer
     priv: ALL
 
-postgresql_exporter_containers:
-  - name: postgresql_exporter
-    published_ports:
-      - "127.0.0.1:9187:9187"
+prometheus_image: prom/prometheus
+prometheus_image_tag: v2.11.1
+prometheus_volumes:
+  - "/etc/prometheus.yml:/etc/prometheus/prometheus.yml"
+prometheus_published_ports:
+  - "127.0.0.1:9090:9090"
+
+grafana_image: grafana/grafana
+grafana_image_tag: 6.3.2
+grafana_published_ports:
+  - "127.0.0.1:3000:3000"

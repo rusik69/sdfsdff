@@ -1,5 +1,6 @@
 common_packages:
   - python-setuptools
   - python-pip
+  - docker-compose
 
 docker_network: network
