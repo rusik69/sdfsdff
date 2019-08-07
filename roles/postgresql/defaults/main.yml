@@ -1,3 +1,9 @@
+postgresql_templates:
+  - prometheus.yml
+  - datasource.yaml
+  - dashboard.yaml
+postgresql_files:
+  - dashboard.json
 postgresql_image: postgres
 postgresql_image_tag: 11.4
 postgresql_db_name: postgresql
@@ -31,3 +37,7 @@ grafana_image: grafana/grafana
 grafana_image_tag: 6.3.2
 grafana_published_ports:
   - "127.0.0.1:3000:3000"
+grafana_volumes:
+  - "/etc/datasource.yaml:/etc/grafana/provisioning/datasources/prometheus.yaml"
+  - "/etc/dashboard.yaml:/etc/grafana/provisioning/dashboards/dashboard.yaml"
+  - "/etc/dashboard.json:/etc/grafana/provisioning/dashboards/dashboard.json"

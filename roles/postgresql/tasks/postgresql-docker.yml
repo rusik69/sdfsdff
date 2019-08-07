@@ -1,8 +1,13 @@
-- name: copy prometheus.yml template
+- name: copy templates
   template:
-    src: prometheus.yml.j2
-    dest: /etc/prometheus.yml
-
+    src: "{{ item }}"
+    dest: "/etc/{{ item }}"
+  loop: "{{ postgresql_templates }}"
+- name: copy files
+  copy:
+    src: "{{ item }}"
+    dest: "/etc/{{ item }}"
+  loop: "{{ postgresql_files }}"
 - name: run docker containers
   docker_compose:
     project_name: postgresql
@@ -31,3 +36,4 @@
         grafana:
           image: "{{ grafana_image }}:{{ grafana_image_tag }}"
           ports: "{{ grafana_published_ports }}"
+          volumes: "{{ grafana_volumes }}"
