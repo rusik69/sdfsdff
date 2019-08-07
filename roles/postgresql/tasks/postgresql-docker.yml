@@ -17,10 +17,10 @@
             POSTGRES_PASSWORD: "{{ postgresql_user_password }}"
           volumes: "{{ postgresql_volumes }}"
           ports: "{{ postgresql_published_ports }}"
-        prometheus_exporter:
+        postgresql-exporter:
           image: "{{ postgresql_exporter_image }}:{{ postgresql_exporter_image_tag }}"
           environment:
-            DATA_SOURCE_URI: "postgresql://postgresql:5432/postgres?sslmode=disable"
+            DATA_SOURCE_URI: "postgresql:5432/postgres?sslmode=disable"
             DATA_SOURCE_USER: "{{ postgresql_user_name }}"
             DATA_SOURCE_PASS: "{{ postgresql_user_password }}"
           ports: "{{ postgresql_exporter_published_ports }}"
