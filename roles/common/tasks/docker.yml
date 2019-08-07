@@ -5,7 +5,7 @@
     update_cache: yes
     state: present
 
-- name: install docker python modules
+- name: install python modules
   pip:
     name: "{{ item }}"
     state: present

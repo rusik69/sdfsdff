@@ -8,10 +8,8 @@
       POSTGRES_PASSWORD: "{{ item.default_password | default('postgres') }}"
     volumes: "{{ item.volumes | default([]) }}"
     published_ports: "{{ item.published_ports | default([]) }}"
-    networks:
-      - name: "{{ docker_network }}"
-  loop:
-    "{{ postgresql_containers }}"
+    network_mode: "{{ item.network | default(docker_network) }}"
+  loop: "{{ postgresql_containers }}"
 
 - name: create postgresql users
   postgresql_user:
