@@ -1,9 +1,8 @@
-postgresql_templates:
+postgresql_files:
+  - dashboard.json
   - prometheus.yml
   - datasource.yaml
   - dashboard.yaml
-postgresql_files:
-  - dashboard.json
 postgresql_image: postgres
 postgresql_image_tag: 11.4
 postgresql_db_name: postgresql
