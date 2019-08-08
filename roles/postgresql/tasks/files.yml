@@ -1,0 +1,31 @@
+- name: create dirs
+  file:
+    path: "{{ item }}"
+    state: directory
+  loop: "{{ postgresql_dirs }}"
+- name: copy files
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  loop: "{{ postgresql_files }}"
+- name: copy templates
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  loop: "{{ postgresql_templates }}"
+- name: copy nginx.crt
+  copy:
+    content: "{{ nginx_crt }}"
+    dest: /etc/ssl/certs/nginx.crt
+- name: copy nginx.key
+  copy:
+    content: "{{ nginx_key }}"
+    dest: /etc/ssl/private/nginx.key
+    mode: 0600
+    owner: root
+- name: copy dhparam
+  copy:
+    content: "{{ dhparam }}"
+    dest: /etc/ssl/private/dhparam.pem
+    mode: 0600
+    owner: root

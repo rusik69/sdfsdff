@@ -1,0 +1,5 @@
+- name: ufw allow https
+  ufw:
+    rule: allow
+    port: 443
+    proto: tcp

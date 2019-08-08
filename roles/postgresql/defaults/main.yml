@@ -13,7 +13,6 @@ postgresql_templates:
     dest: /etc/postgresql.conf
 postgresql_dirs:
   - /etc/nginx
-  - /etc/certbot
 postgresql_image: postgres
 postgresql_image_tag: 11.4
 postgresql_db_name: postgresql
@@ -59,13 +58,8 @@ nginx_image: nginx
 nginx_image_tag: 1.17.2-alpine
 nginx_ports:
   - "443:443"
-  - "80:80"
 nginx_volumes:
   - /etc/nginx:/etc/nginx/conf.d
-  - /etc/certbot/conf:/etc/letsencrypt
-  - /etc/certbot/www:/var/www/certbot
-
-certbot_image: certbot/certbot
-certbot_volumes:
-  - /etc/certbot/conf:/etc/letsencrypt
-  - /etc/certbot/www:/var/www/certbot
+  - /etc/ssl/certs/nginx.crt:/etc/ssl/certs/nginx.crt
+  - /etc/ssl/private/nginx.key:/etc/ssl/private/nginx.key
+  - /etc/ssl/private/dhparam.pem:/etc/ssl/private/dhparam.pem

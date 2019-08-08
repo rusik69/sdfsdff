@@ -1,2 +1,2 @@
 [postgresql]
-rusik.dev
+rusik.dev ansible_ssh_user=rusik

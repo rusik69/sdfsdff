@@ -1,2 +1,4 @@
+- include: files.yml
+- include: firewall.yml
 - include: postgresql-docker.yml
 - include: postgresql-users.yml
