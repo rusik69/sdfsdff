@@ -1,0 +1,25 @@
+server {
+    listen 80;
+    server_name "{{ domain_name }}";
+    location / {
+        return 301 https://$host$request_uri;
+    }
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+}
+server {
+    listen 443 ssl;
+    ssl_certificate "/etc/letsencrypt/live/{{ domain_name }}/fullchain.pem";
+    ssl_certificate_key ""/etc/letsencrypt/live/{{ domain_name }}/privkey.pem";
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+    server_name "{{ domain_name }}";
+
+    location ^/grafana/(.*)$ {
+        proxy_pass http://grafana:3000/$1;
+    }
+    location ^/prometheus/(.*)$ {
+        proxy_pass http://prometheus:9090/$1;
+    }
+}

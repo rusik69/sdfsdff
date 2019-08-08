@@ -1,8 +1,18 @@
+- name: create dirs
+  file:
+    path: "{{ item }}"
+    state: directory
+  loop: "{{ postgresql_dirs }}"
 - name: copy files
   copy:
-    src: "{{ item }}"
-    dest: "/etc/{{ item }}"
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
   loop: "{{ postgresql_files }}"
+- name: copy templates
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  loop: "{{ postgresql_templates }}"
 - name: run docker containers
   docker_compose:
     project_name: postgresql
@@ -16,19 +26,35 @@
             POSTGRES_USER: "{{ postgresql_user_name }}"
             POSTGRES_PASSWORD: "{{ postgresql_user_password }}"
           volumes: "{{ postgresql_volumes }}"
-          ports: "{{ postgresql_published_ports }}"
+          ports: "{{ postgresql_ports }}"
         postgresql-exporter:
           image: "{{ postgresql_exporter_image }}:{{ postgresql_exporter_image_tag }}"
           environment:
             DATA_SOURCE_URI: "postgresql:5432/postgres?sslmode=disable"
             DATA_SOURCE_USER: "{{ postgresql_user_name }}"
             DATA_SOURCE_PASS: "{{ postgresql_user_password }}"
-          ports: "{{ postgresql_exporter_published_ports }}"
+          ports: "{{ postgresql_exporter_ports }}"
         prometheus:
           image: "{{ prometheus_image }}:{{ prometheus_image_tag }}"
           volumes: "{{ prometheus_volumes }}"
-          ports: "{{ prometheus_published_ports }}"
+          ports: "{{ prometheus_ports }}"
         grafana:
           image: "{{ grafana_image }}:{{ grafana_image_tag }}"
-          ports: "{{ grafana_published_ports }}"
+          ports: "{{ grafana_ports }}"
           volumes: "{{ grafana_volumes }}"
+        pgbench:
+          image: "{{ pgbench_image }}"
+          environment:
+            PGDATABASE: "{{ postgresql_db_name }}"
+            PGPASSWORD: "{{ postgresql_users[1].password }}"
+            PGUSER: "{{ postgresql_users[1].name }}"
+            PGHOST: "postgresql"
+            RESULT_DB: "{{ postgresql_db_name }}"
+            BENCHMARK_DB: "{{ postgresql_db_name }}"
+        nginx:
+          image: "{{ nginx_image }}:{{ nginx_image_tag }}"
+          ports: "{{ nginx_ports }}"
+          volumes: "{{ nginx_volumes }}"
+        certbot:
+          image: "{{ certbot_image }}"
+          volumes: "{{ certbot_volumes }}"

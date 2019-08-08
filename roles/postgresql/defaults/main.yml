@@ -1,8 +1,19 @@
+domain_name: example.com
 postgresql_files:
-  - dashboard.json
-  - prometheus.yml
-  - datasource.yaml
-  - dashboard.yaml
+  - src: dashboard.json
+    dest: /etc/dashboard.json
+  - src: prometheus.yml
+    dest: /etc/prometheus.yml
+  - src: datasource.yaml
+    dest: /etc/datasource.yaml
+  - src: dashboard.yaml
+    dest: /etc/dashboard.yaml
+postgresql_templates:
+  - src: postgresql.conf.j2
+    dest: /etc/postgresql.conf
+postgresql_dirs:
+  - /etc/nginx
+  - /etc/certbot
 postgresql_image: postgres
 postgresql_image_tag: 11.4
 postgresql_db_name: postgresql
@@ -10,12 +21,12 @@ postgresql_user_name: postgresql
 postgresql_user_password: postgresql
 postgresql_volumes:
   - "/var/lib/postgresql:/var/lib/postgresql"
-postgresql_published_ports:
+postgresql_ports:
   - "127.0.0.1:5432:5432"
 
 postgresql_exporter_image: wrouesnel/postgres_exporter
 postgresql_exporter_image_tag: v0.5.1
-postgresql_exporter_published_ports:
+postgresql_exporter_ports:
   - "127.0.0.1:9187:9187"
 postgresql_users:
   - name: reader
@@ -28,15 +39,33 @@ postgresql_users:
 prometheus_image: prom/prometheus
 prometheus_image_tag: v2.11.1
 prometheus_volumes:
+  - "/var/lib/prometheus:/prometheus"
   - "/etc/prometheus.yml:/etc/prometheus/prometheus.yml"
-prometheus_published_ports:
+prometheus_ports:
   - "127.0.0.1:9090:9090"
 
 grafana_image: grafana/grafana
 grafana_image_tag: 6.3.2
-grafana_published_ports:
+grafana_ports:
   - "127.0.0.1:3000:3000"
 grafana_volumes:
   - "/etc/datasource.yaml:/etc/grafana/provisioning/datasources/prometheus.yaml"
   - "/etc/dashboard.yaml:/etc/grafana/provisioning/dashboards/dashboard.yaml"
   - "/etc/dashboard.json:/etc/grafana/provisioning/dashboards/dashboard.json"
+
+pgbench_image: nukapi/pgbench2postgres
+
+nginx_image: nginx
+nginx_image_tag: 1.17.2-alpine
+nginx_ports:
+  - "443:443"
+  - "80:80"
+nginx_volumes:
+  - /etc/nginx:/etc/nginx/conf.d
+  - /etc/certbot/conf:/etc/letsencrypt
+  - /etc/certbot/www:/var/www/certbot
+
+certbot_image: certbot/certbot
+certbot_volumes:
+  - /etc/certbot/conf:/etc/letsencrypt
+  - /etc/certbot/www:/var/www/certbot
